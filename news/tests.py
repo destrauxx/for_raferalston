@@ -35,13 +35,12 @@ class NewsTest(TestCase):
         self.assertEqual(user_count, 2)
 
     def test_all_access_view(self):
-        admin_client = Client()
-        admin_login = admin_client.login(username=self.admin_name, password=self.admin_password)
-        response = admin_client.get(reverse('detail-news', args=(1,)))
+        admin_login = self.client.login(username=self.admin_name, password=self.admin_password)
+        response = self.client.get(reverse('detail-news', args=(1,)))
         self.assertTrue(response.status_code==200)
     
     def test_forbidden_regular_access_view(self):
         self.client.login(username=self.registered_name, password=self.registered_password)
-        response = self.client.post('/news/create', {'article': 'denied'})
-        print(response.status_code)
+        response = self.client.post('/news/create/', {'article': 'denied'})
+        # /news/create -> /news/create/ Добавил / и все заработало=)
         self.assertTrue(response.status_code==403)
